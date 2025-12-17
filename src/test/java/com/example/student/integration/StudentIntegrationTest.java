@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StudentIntegrationTest {
+// TODO: cek lagi response code 200/201
 
     @Autowired
     private TestRestTemplate restTemplate;
