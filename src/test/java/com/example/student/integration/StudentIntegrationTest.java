@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,27 +19,46 @@ class StudentIntegrationTest {
     @Test
     void create_get_delete_flow() {
 
+        // =====================
+        // CREATE
+        // =====================
         Student student = new Student("123", "Andi", 3.5);
 
-        // CREATE
         ResponseEntity<Student> createResponse =
                 restTemplate.postForEntity("/api/students", student, Student.class);
 
-        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(createResponse.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
 
+        assertThat(createResponse.getBody()).isNotNull();
+        assertThat(createResponse.getBody().getNpm())
+                .isEqualTo("123");
+
+        // =====================
         // GET
+        // =====================
         ResponseEntity<Student> getResponse =
                 restTemplate.getForEntity("/api/students/123", Student.class);
 
-        assertThat(getResponse.getBody().getName()).isEqualTo("Andi");
+        assertThat(getResponse.getStatusCode())
+                .isEqualTo(HttpStatus.CREATED);
 
+        assertThat(getResponse.getBody()).isNotNull();
+        assertThat(getResponse.getBody().getName())
+                .isEqualTo("Andi");
+
+        // =====================
         // DELETE
+        // =====================
         restTemplate.delete("/api/students/123");
 
+        // =====================
         // GET AFTER DELETE
+        // =====================
         ResponseEntity<String> afterDelete =
                 restTemplate.getForEntity("/api/students/123", String.class);
 
-        assertThat(afterDelete.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(afterDelete.getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

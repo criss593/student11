@@ -2,10 +2,11 @@ package com.example.student.service;
 
 import com.example.student.model.Student;
 import com.example.student.repository.StudentJpaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class StudentService {
@@ -18,7 +19,10 @@ public class StudentService {
 
     public Student create(Student student) {
         if (repo.existsById(student.getNpm())) {
-            throw new IllegalArgumentException("NPM exists");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "NPM exists"
+            );
         }
         return repo.save(student);
     }
@@ -29,7 +33,12 @@ public class StudentService {
 
     public Student findByNpm(String npm) {
         return repo.findById(npm)
-                .orElseThrow(() -> new NoSuchElementException("Not found"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Student not found"
+                        )
+                );
     }
 
     public Student update(String npm, Student updated) {
@@ -40,6 +49,12 @@ public class StudentService {
     }
 
     public void delete(String npm) {
+        if (!repo.existsById(npm)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Student not found"
+            );
+        }
         repo.deleteById(npm);
     }
 }

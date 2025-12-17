@@ -19,13 +19,13 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getAll() {
-        return service.getAll();
+    public ResponseEntity<List<Student>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{npm}")
-    public Student getByNpm(@PathVariable String npm) {
-        return service.findByNpm(npm);
+    public ResponseEntity<Student> getByNpm(@PathVariable String npm) {
+        return ResponseEntity.ok(service.findByNpm(npm));
     }
 
     @PostMapping
@@ -37,13 +37,14 @@ public class StudentController {
     }
 
     @PutMapping("/{npm}")
-    public Student update(@PathVariable String npm,
-                          @RequestBody Student student) {
-        return service.update(npm, student);
+    public ResponseEntity<Student> update(@PathVariable String npm,
+                                          @RequestBody Student student) {
+        return ResponseEntity.ok(service.update(npm, student));
     }
 
     @DeleteMapping("/{npm}")
-    public void delete(@PathVariable String npm) {
+    public ResponseEntity<Void> delete(@PathVariable String npm) {
         service.delete(npm);
+        return ResponseEntity.noContent().build(); // 204
     }
 }
